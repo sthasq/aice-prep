@@ -1,0 +1,60 @@
+name: Daily Study Reminder (KST 21:15)
+
+on:
+  schedule:
+    # Runs at 12:15 UTC daily (21:15 KST, UTC+9)
+    - cron: "15 12 * * *"
+  workflow_dispatch:
+
+jobs:
+  create-issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create daily study issue if not exists
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Compute today's date in KST (UTC+9)
+            const now = new Date(Date.now() + 9 * 60 * 60 * 1000);
+            const yyyy = now.getUTCFullYear();
+            const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+            const dd = String(now.getUTCDate()).padStart(2, '0');
+            const today = `${yyyy}-${mm}-${dd}`;
+
+            const title = `오늘의 AICE 학습 (${today} KST)`;
+
+            // Check if an open issue with today's title exists
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              per_page: 100,
+            });
+
+            if (issues.some(i => i.title === title)) {
+              core.info(`Issue "${title}" already exists.`);
+              return;
+            }
+
+            const body = [
+              "### 체크리스트",
+              "- [ ] 오늘의 학습 계획 수립",
+              "- [ ] 필수 개념 1개 요약",
+              "- [ ] 문제 3개 풀이 (pytest)",
+              "- [ ] 오답/메모 `docs/mistakes.md` 업데이트",
+              "",
+              "### 팁",
+              "- 레포의 **Projects** 보드에서 작업을 이동하세요.",
+              "- 노트는 `docs/` 아래에 추가하세요. 푸시 시 자동 배포됩니다."
+            ].join("\n");
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ["study"]
+            });
+            core.info(`Created issue: ${title}`);

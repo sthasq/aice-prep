@@ -1,0 +1,47 @@
+name: 📚 Study Task
+description: AICE 학습 태스크를 생성합니다.
+title: "[Study] {topic} – {date}"
+labels: ["study"]
+body:
+  - type: input
+    id: topic
+    attributes:
+      label: 주제(Topic)
+      description: 이번 학습의 핵심 주제(예: Pandas groupby, 혼동행렬 등)
+      placeholder: 예) Pandas groupby
+    validations:
+      required: true
+  - type: textarea
+    id: goals
+    attributes:
+      label: 목표(Goals)
+      description: 무엇을 할 수 있게 될까요?
+      placeholder: |
+        - groupby 기본 문법 이해
+        - agg/apply 차이 설명
+        - 예제 3개 따라하기
+    validations:
+      required: true
+  - type: textarea
+    id: resources
+    attributes:
+      label: 참고 자료(Resources)
+      placeholder: 링크, 책/강의, 노트 등
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: 산출물(Deliverables)
+      placeholder: 예) `docs/pandas-groupby.md` 초안, `src/quizzes/test_groupby.py` 3문항
+  - type: dropdown
+    id: label
+    attributes:
+      label: 라벨
+      multiple: true
+      options:
+        - core
+        - python
+        - data
+        - ml
+        - ethics
+        - mock-test
+        - review
