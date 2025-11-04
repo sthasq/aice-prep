@@ -1,0 +1,12 @@
+site_name: AICE Prep Notes
+nav:
+  - Home: index.md
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
